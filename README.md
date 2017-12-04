@@ -9,7 +9,7 @@ Imagine to read the temperature and humidity from a website?
 
  Listed in requirements.txt. Install with:
 
-    $ env2/bin/pip install -r requirements.txt
+    $ pip install -r requirements.txt
 
 ## Getting started
 
