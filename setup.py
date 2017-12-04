@@ -1,7 +1,7 @@
 import db
 from helpers import *
 import configparser
-from datetime import date, datetime, timedelta
+from datetime import datetime, timedelta
 import random
 
 
@@ -65,8 +65,9 @@ def do_setup():
         if query_yes_no("[!] The table {} doesn't exist. Create it?".format(cfg["readwrite"]["table"])):
             db.create_table()
             print(bcolors.OKGREEN, "[*] Table Created.", bcolors.ENDC)
+            if query_yes_no("Create sample data?"):
+                create_sample_data(input("How many rows?"))
 
 if __name__ == "__main__":
-    #do_setup()
-    #print(bcolors.HEADER, "Setup complete.", bcolors.ENDC)
-    create_sample_data(10)
+    do_setup()
+    print(bcolors.HEADER, "Setup complete.", bcolors.ENDC)

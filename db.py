@@ -2,10 +2,6 @@ import configparser
 import mysql.connector
 from helpers import *
 
-INSERT_QUERY = "INSERT INTO " \
-               "readings(readingtimestamp, sensor, temperature, humidity, location) " \
-               "VALUES (%(timestamp)s, %(sensor)s, %(temp)s, %(humidity)s, %(location)s)"
-SELECT_QUERY = "SELECT * FROM readings WHERE {0}"
 config = configparser.ConfigParser()
 TEST_STRINGS = {"connection": ["[*] Testing database connection...",
                                "[*] Server connection OK!"],
@@ -14,14 +10,20 @@ TEST_STRINGS = {"connection": ["[*] Testing database connection...",
                 }
 
 
+class Queries:
+    INSERT_QUERY = "INSERT INTO " \
+                   "readings(readingtimestamp, sensor, temperature, humidity, location) " \
+                   "VALUES (%(timestamp)s, %(sensor)s, %(temp)s, %(humidity)s, %(location)s)"
+    SELECT_QUERY = "SELECT * FROM readings WHERE {}"
+
+
 def load_config():
     config.read('DHT22.cfg')
 
 
-def get_reading_dict(reading_dict):
+def get_reading_dict():
     read_dict = {"timestamp": "", "sensor": "", "temp": "", "humidity": "", "location": ""}
-    reading_dict = read_dict
-    return reading_dict
+    return read_dict
 
 
 def create_new_database(database_name):
@@ -90,8 +92,7 @@ def table_exists():
 
 
 def insert_row(data):
-    stmt = INSERT_QUERY
-    run_query(stmt, data)
+    return run_query(Queries.INSERT_QUERY, data)
 
 
 def run_query(stmt, data=''):
@@ -99,9 +100,9 @@ def run_query(stmt, data=''):
     cnx = mysql.connector.connect(**dict(config.items('database')))
     cursor = cnx.cursor()
     cursor.execute(stmt, data)
-    cursor.execute(stmt, data)
     cnx.commit()
     cnx.close()
+    return True
 
 
 if __name__ == "__main__":
