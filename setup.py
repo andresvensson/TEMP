@@ -1,6 +1,24 @@
 import db
 from helpers import *
 import configparser
+from datetime import date, datetime, timedelta
+import random
+
+
+def create_sample_data(no_of_rows):
+    # readings(readingtimestamp, sensor, temperature, humidity, location)
+    for i in range(0, no_of_rows):
+        ts = datetime.now() - timedelta(days=i)
+        temp = random.randint(10, 30)
+        humidity = random.randint(30, 100)
+        sensor = random.randint(1, 2)
+        location = "Sample" + str(sensor)
+        reading = {"timestamp": ts,
+                   "sensor": sensor,
+                   "temp": temp,
+                   "humidity": humidity,
+                   "location": location}
+        db.insert_row(reading)
 
 
 def get_database_connection_details(cfg):
@@ -24,7 +42,7 @@ def create_config_file(cfg):
         for key2 in cfg[key]:
             print(key2, ':', cfg[key][key2])
             conf.set(key, key2, cfg[key][key2])
-    print(bcolors.OKGREEN, "\r\n", "-" * 20, bcolors.ENDC)
+    print(bcolors.OKGREEN, "-" * 20, bcolors.ENDC)
     with open('DHT22.cfg', 'w') as file:
         conf.write(file)
         print(bcolors.OKBLUE, "Config file created: ", file.name, bcolors.ENDC)
@@ -40,7 +58,7 @@ def do_setup():
     get_database_and_table(cfg)
     create_config_file(cfg)
     if not db.test_connection(cfg["database"], "connection"):
-        if query_yes_no("[!] The database {} doesn't exist,. Create it?".format(cfg["database"]["database"])):
+        if query_yes_no("[!] The database \"{}\" doesn't exist. Create it?".format(cfg["database"]["database"])):
             db.create_new_database(cfg["database"]["database"])
             print(bcolors.OKGREEN, "[*] Database Created.", bcolors.ENDC)
     if not db.table_exists():
@@ -49,5 +67,6 @@ def do_setup():
             print(bcolors.OKGREEN, "[*] Table Created.", bcolors.ENDC)
 
 if __name__ == "__main__":
-    do_setup()
-    print(bcolors.HEADER, "Setup complete.", bcolors.ENDC)
+    #do_setup()
+    #print(bcolors.HEADER, "Setup complete.", bcolors.ENDC)
+    create_sample_data(10)
